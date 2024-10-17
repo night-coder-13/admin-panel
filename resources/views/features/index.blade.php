@@ -1,22 +1,19 @@
 @extends('layout.master')
 
-@section('title', 'Sliders')
+@section('title', 'Feature')
 
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="fw-bold">اسلایدر ها</h4>
+        <h4 class="fw-bold">ویژگی ها</h4>
         <div>
-            <a href="{{ route('slider.create') }}" class="btn btn-sm btn-outline-primary">ایجاد اسلایدر</a>
-            @if ($trash)
-                <a href="{{ route('slider.trash') }}" class="btn btn-sm btn-outline-danger mx-1">حذف شده ها</a>
-            @endif
+            <a href="{{ route('feature.create') }}" class="btn btn-sm btn-outline-primary">ایجاد ویژگی</a>
         </div>
     </div>
 
-    @if (count($sliders) == 0)
+    @if (count($features) == 0)
         <div class="text-center">
             <p class="mt-5 mb-3">موردی یافت نشد !</p>
-            <a href="{{ route('slider.create') }}" class="btn btn-sm btn-outline-primary">ایجاد اسلایدر</a>
+            <a href="{{ route('feature.create') }}" class="btn btn-sm btn-outline-primary">ایجاد اسلایدر</a>
         </div>
     @else
         <div class="table-responsive">
@@ -24,24 +21,22 @@
                 <thead>
                     <tr>
                         <th>عنوان</th>
-                        <th>عنوان لینک</th>
-                        <th>آدرس لینک</th>
+                        <th>آیکن</th>
                         <th>متن</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sliders as $slider)
+                    @foreach ($features as $feature)
                         <tr>
-                            <td>{{ $slider->title }}</td>
-                            <td>{{ $slider->title_url }}</td>
-                            <td class="dir-ltr">{{ $slider->url }}</td>
-                            <td>{{ $slider->body }}</td>
+                            <td>{{ $feature->title }}</td>
+                            <td>{{ $feature->icon }}</td>
+                            <td>{{ $feature->body }}</td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="{{ route('slider.edit', ['slider' => $slider->id]) }}"
+                                    <a href="{{ route('feature.edit', ['feature' => $feature->id]) }}"
                                         class="btn btn-sm btn-outline-info me-2">ویرایش</a>
-                                    <form action="{{ route('slider.destroy', ['slider' => $slider->id]) }}" method="post">
+                                    <form action="{{ route('feature.destroy', ['feature' => $feature->id]) }}" method="post">
                                         @csrf
                                         @method('delete')
                                         <button type="submit" class="btn btn-sm btn-danger">حذف</button>
