@@ -30,8 +30,8 @@
         <div class="col-md-3">
             <label class="form-label">وضعیت</label>
             <select name="status" class="form-select">
-                <option {{ $category->status == '1' ? 'selected' : '' }} value="1">فعال</option>
-                <option {{ $category->status == '0' ? 'selected' : '' }} value="0">غیر فعال</option>
+                <option {{ $category->status ? 'selected' : '' }} value="1">فعال</option>
+                <option {{ $category->status ? 'selected' : '' }} value="0">غیر فعال</option>
             </select>
             <div class="form-text text-danger">
                 @error('icon')

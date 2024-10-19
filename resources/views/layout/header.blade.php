@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    @yield('link')
 
     <title>@yield('title')</title>
 </head>
