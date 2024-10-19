@@ -23,8 +23,10 @@
                     محصولات
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
+            <li class="nav-item 
+            {{ request()->is('category') ? 'active' : '' }}
+            ">
+                <a class="nav-link" href="{{ route('category.index') }}">
                     <i class="bi bi-grid-3x3-gap me-2"></i>
                     دسته بندی
                 </a>
