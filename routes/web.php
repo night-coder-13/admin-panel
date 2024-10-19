@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SliderController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,4 +37,14 @@ Route::group(['prefix'=>'category'] , function(){
     Route::get('/{category}/restore' , [CategoryController::class , 'restore'])->name('category.restore');
     Route::put('/{category}/update' , [CategoryController::class , 'update'])->name('category.update');
     Route::delete('/{category}' , [CategoryController::class , 'destroy'])->name('category.destroy');
+});
+Route::group(['prefix'=>'product'] , function(){
+    Route::get('/' , [ProductController::class , 'index'])->name('product.index');
+    Route::get('/trash' , [ProductController::class , 'trash'])->name('product.trash');
+    Route::get('/create' , [ProductController::class , 'create'])->name('product.create');
+    Route::post('/store' , [ProductController::class , 'store'])->name('product.store');
+    Route::get('/{product}/edit' , [ProductController::class , 'edit'])->name('product.edit');
+    Route::get('/{product}/restore' , [ProductController::class , 'restore'])->name('product.restore');
+    Route::put('/{product}/update' , [ProductController::class , 'update'])->name('product.update');
+    Route::delete('/{product}' , [ProductController::class , 'destroy'])->name('product.destroy');
 });
