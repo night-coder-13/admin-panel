@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Hekmatinasser\Verta\Facades\Verta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -25,6 +26,10 @@ class ProductController extends Controller
             return view('products.index', compact(['products', 'trash']));
         }
     }
+    public function show(Product $product)
+    {
+        return view('products.show', compact('product'));
+    }
     public function trash()
     {
         $products = Product::onlyTrashed()->get();
@@ -34,7 +39,7 @@ class ProductController extends Controller
     {
         $product = Product::withTrashed()->find($product);
         $product->restore();
-        return redirect()->route('product.index')->with(['warning' => 'اسلایدر با عنوان "' . $product->title . '" بازتولید شد']);
+        return redirect()->route('product.index')->with(['warning' => 'محصول با نام "' . $product->name . '" بازتولید شد']);
     }
     public function create()
     {
@@ -59,12 +64,13 @@ class ProductController extends Controller
 
         $primaryImageName = Carbon::now()->microsecond . '-' . $request->primary_image->getClientOriginalName();
         $request->primary_image->storeAs('images/products/', $primaryImageName);
+
         $ImageNames = [];
-        foreach($request->images as $img){
+        foreach ($request->images as $img) {
             $ImageName = Carbon::now()->microsecond . '-' . $img->getClientOriginalName();
             $img->storeAs('images/products/', $ImageName);
 
-            array_push($ImageNames , $ImageName);
+            array_push($ImageNames, $ImageName);
         }
 
         DB::beginTransaction();
@@ -83,7 +89,7 @@ class ProductController extends Controller
             'date_on_sale_to' => $request->date_on_sale_to !== null ? getMiladiDate($request->date_on_sale_to) : null,
         ]);
 
-        
+
         if ($request->has('images') && $request->images !== null) {
             foreach ($ImageNames as $fileNameImage) {
                 ProductImage::create([
@@ -100,32 +106,81 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $categories = Category::all();
+
+        return view('products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'title' => 'required|string|min:4|max:30',
-            'url' => 'required|string',
-            'title_url' => 'required|string',
-            'body' => 'required|string|min:10',
+            // 'primary_image' => 'required|image',
+            'name' => 'required|string',
+            'category_id' => 'required|integer',
+            'description' => 'required',
+            'price' => 'required|integer',
+            'status' => 'required|integer',
+            'quantity' => 'required|integer',
+            'sale_price' => 'nullable|integer',
+            'date_on_sale_from' => 'nullable|date_format:Y/m/d H:i:s',
+            'date_on_sale_to' => 'nullable|date_format:Y/m/d H:i:s',
+            // 'images.*' => 'nullable|image'
         ]);
+        if ($request->has('primary_image') ) {
+            Storage::delete('/images/products/' . $product->primary_image); // حذف تصویر
+            $primaryImageName = Carbon::now()->microsecond . '-' . $request->primary_image->getClientOriginalName();
+            $request->primary_image->storeAs('images/products/', $primaryImageName);
+        }
+
+        if ($request->has('images') && $request->images !== null) {
+            $ImageNames = [];
+            foreach ($request->images as $img) {
+                foreach ($product->images as $image) {
+                    Storage::delete('/images/products/' . $image->image);
+                    $image->delete();
+                } // حذف تصاویر
+
+                $ImageName = Carbon::now()->microsecond . '-' . $img->getClientOriginalName();
+                $img->storeAs('images/products/', $ImageName);
+                array_push($ImageNames, $ImageName);
+            }
+        }
+
+        DB::beginTransaction();
 
         $product->update([
-            'title' => $request->title,
-            'url' => $request->url,
-            'title_url' => $request->title_url,
-            'body' => $request->body,
+            'name' => $request->name,
+            'slug' => $request->name != $product->name ? $this->makeSlug($request->name) : $product->slug,
+            'category_id' => $request->category_id,
+            'primary_image' => $request->primary_image !== null ? $primaryImageName : $product->primary_image,
+            'description' => $request->description,
+            'status' => $request->status,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'sale_price' => $request->sale_price !== null ? $request->sale_price : 0,
+            'date_on_sale_from' => $request->date_on_sale_from !== null ? getMiladiDate($request->date_on_sale_from) : null,
+            'date_on_sale_to' => $request->date_on_sale_to !== null ? getMiladiDate($request->date_on_sale_to) : null,
         ]);
 
-        return redirect()->route('product.index')->with(['success' => 'اسلایدر با عنوان "' . $request->title . '" ویرایش شد']);
+
+        if ($request->has('images') && $request->images !== null) {
+            foreach ($ImageNames as $fileNameImage) {
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $fileNameImage
+                ]);
+            }
+        }
+
+        DB::commit();
+
+        return redirect()->route('product.index')->with(['success' => 'محصول با نام "' . $request->name . '" ویرایش شد']);
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('product.index')->with(['info' => 'اسلایدر با عنوان "' . $product->title . '" حذف شد']);
+        return redirect()->route('product.index')->with(['info' => 'محصول با نام "' . $product->name . '" حذف شد']);
     }
 
 
