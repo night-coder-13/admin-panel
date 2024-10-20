@@ -161,13 +161,14 @@
             </div>
         </div>
 
-        <div>
+        <div class="mb-5">
             <a href="{{ route('product.index') }}" class="btn btn-warning mt-3 mx-3">
                 برگشت
             </a>
             <button type="submit" class="btn btn-outline-dark mt-3">
-                ایجاد دسته
+                ایجاد محصول
             </button>
         </div>
+        
     </form>
 @endsection

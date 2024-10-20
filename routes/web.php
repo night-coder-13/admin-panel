@@ -43,6 +43,7 @@ Route::group(['prefix'=>'product'] , function(){
     Route::get('/trash' , [ProductController::class , 'trash'])->name('product.trash');
     Route::get('/create' , [ProductController::class , 'create'])->name('product.create');
     Route::post('/store' , [ProductController::class , 'store'])->name('product.store');
+    Route::get('/{product}' , [ProductController::class , 'show'])->name('product.show');
     Route::get('/{product}/edit' , [ProductController::class , 'edit'])->name('product.edit');
     Route::get('/{product}/restore' , [ProductController::class , 'restore'])->name('product.restore');
     Route::put('/{product}/update' , [ProductController::class , 'update'])->name('product.update');

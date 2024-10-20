@@ -36,42 +36,38 @@
                     @foreach ($products as $product)
                         <tr>
                             <td>
-                                <img src="{{ asset('images/products/' . $product->primary_image) }}" class="rounded" width="100" alt="product-image">
+                                <img src="{{ asset('images/products/' . $product->primary_image) }}" class="rounded"
+                                    width="100" alt="product-image">
                             </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->category->name }}</td>
                             <td>{{ number_format($product->price) }}</td>
                             <td>{{ $product->quantity }}</td>
                             <td>{{ $product->status ? 'فعال' : 'غیر فعال' }}</td>
-    
+
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('product.show', ['product' => $product->id]) }}"
                                         class="btn btn-sm btn-outline-primary me-2">نمایش</a>
-    
+
                                     <a href="{{ route('product.edit', ['product' => $product->id]) }}"
                                         class="btn btn-sm btn-outline-info me-2">ویرایش</a>
-    
-                                    <form action="{{ route('product.destroy', ['product' => $product->id]) }}" method="POST">
+
+                                    <form action="{{ route('product.destroy', ['product' => $product->id]) }}"
+                                        method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">حذف</button>
                                     </form>
                                 </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-
-        <div class="d-flex justify-content-center mt-4">
-            <nav aria-label="navigation">
-                <ul class="pagination">
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                </ul>
-            </nav>
+        <div>
+            {{ $products->links('layout.paginate') }}
         </div>
     @endif
 @endsection
