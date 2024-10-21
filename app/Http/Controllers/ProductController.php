@@ -10,6 +10,7 @@ use Hekmatinasser\Verta\Facades\Verta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -18,11 +19,11 @@ class ProductController extends Controller
         $trash = Product::onlyTrashed()->get();
         if (count($trash) != 0) {
             $trash = true;
-            $products = Product::paginate(3);
+            $products = Product::paginate(5);
             return view('products.index', compact(['products', 'trash']));
         } else {
             $trash = false;
-            $products = Product::paginate(3);
+            $products = Product::paginate(5);
             return view('products.index', compact(['products', 'trash']));
         }
     }
@@ -61,16 +62,23 @@ class ProductController extends Controller
             'date_on_sale_to' => 'nullable|date_format:Y/m/d H:i:s',
             'images.*' => 'nullable|image'
         ]);
-
+        $image = $request->file('primary_image');
         $primaryImageName = Carbon::now()->microsecond . '-' . $request->primary_image->getClientOriginalName();
-        $request->primary_image->storeAs('images/products/', $primaryImageName);
+        // تغییر اندازه و کیفیت تصویر
+        Image::read($image)->scale(800, 600)->save(public_path('images/products/' . $primaryImageName));
+        //تصویر اصلی
+        // $request->primary_image->storeAs('images/products/', $primaryImageName);
 
         $ImageNames = [];
-        foreach ($request->images as $img) {
-            $ImageName = Carbon::now()->microsecond . '-' . $img->getClientOriginalName();
-            $img->storeAs('images/products/', $ImageName);
+        if ($request->images !== null) {
+            foreach ($request->images as $img) {
+                // dd($img);
+                $ImageName = Carbon::now()->microsecond . '-' . $img->getClientOriginalName();
+                Image::read($img)->scale(800, 600)->save( public_path('images/products/'.$ImageName) );
+                // $img->storeAs('images/products/', $ImageName);
 
-            array_push($ImageNames, $ImageName);
+                array_push($ImageNames, $ImageName);
+            }
         }
 
         DB::beginTransaction();
@@ -126,7 +134,7 @@ class ProductController extends Controller
             'date_on_sale_to' => 'nullable|date_format:Y/m/d H:i:s',
             // 'images.*' => 'nullable|image'
         ]);
-        if ($request->has('primary_image') ) {
+        if ($request->has('primary_image')) {
             Storage::delete('/images/products/' . $product->primary_image); // حذف تصویر
             $primaryImageName = Carbon::now()->microsecond . '-' . $request->primary_image->getClientOriginalName();
             $request->primary_image->storeAs('images/products/', $primaryImageName);
