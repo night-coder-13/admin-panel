@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SliderController;
@@ -38,6 +39,18 @@ Route::group(['prefix'=>'category'] , function(){
     Route::put('/{category}/update' , [CategoryController::class , 'update'])->name('category.update');
     Route::delete('/{category}' , [CategoryController::class , 'destroy'])->name('category.destroy');
 });
+
+Route::group(['prefix'=>'coupon'] , function(){
+    Route::get('/' , [CouponController::class , 'index'])->name('coupon.index');
+    Route::get('/trash' , [CouponController::class , 'trash'])->name('coupon.trash');
+    Route::get('/create' , [CouponController::class , 'create'])->name('coupon.create');
+    Route::post('/store' , [CouponController::class , 'store'])->name('coupon.store');
+    Route::get('/{coupon}/edit' , [CouponController::class , 'edit'])->name('coupon.edit');
+    Route::get('/{coupon}/restore' , [CouponController::class , 'restore'])->name('coupon.restore');
+    Route::put('/{coupon}/update' , [CouponController::class , 'update'])->name('coupon.update');
+    Route::delete('/{coupon}' , [CouponController::class , 'destroy'])->name('coupon.destroy');
+});
+
 Route::group(['prefix'=>'product'] , function(){
     Route::get('/' , [ProductController::class , 'index'])->name('product.index');
     Route::get('/trash' , [ProductController::class , 'trash'])->name('product.trash');

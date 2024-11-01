@@ -10,15 +10,9 @@ class CategoryController extends Controller
     public function index()
     {
         $trash = Category::onlyTrashed()->get();
-        if (count($trash) != 0) {
-            $trash = true;
-            $categories = Category::all();
-            return view('categories.index', compact(['categories' , 'trash']));
-        } else {
-            $trash = false;
-            $categories = Category::all();
-            return view('categories.index', compact(['categories' , 'trash']));
-        }
+        $trash = count($trash) != 0 ? true : false;
+        $categories = Category::all();
+        return view('categories.index', compact(['categories' , 'trash']));
     }
     public function trash()
     {
