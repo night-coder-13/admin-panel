@@ -40,6 +40,9 @@ class CouponController extends Controller
         if($request->percentage > 100){
             return redirect()->back()->with(['error' => 'درصد تخفیف بیشتر از 100 نمی‌تواند باشد']);
         }
+        if($request->percentage <= 0){
+            return redirect()->back()->with(['error' => 'درصد تخفیف کم تر از 1 نمی‌تواند باشد']);
+        }
         Coupon::create([
             'code' => $request->code,
             'percentage' => $request->percentage,
@@ -62,6 +65,9 @@ class CouponController extends Controller
         ]);
         if($request->percentage > 100){
             return redirect()->back()->with(['error' => 'درصد تخفیف بیشتر از 100 نمی‌تواند باشد']);
+        }
+        if($request->percentage <= 0){
+            return redirect()->back()->with(['error' => 'درصد تخفیف کم تر از 1 نمی‌تواند باشد']);
         }
         $coupon->update([
             'code' => $request->code,
