@@ -2,14 +2,18 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SliderController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
+Route::get('/' , [DashboardController::class , 'index'])->name('dashboard');
 
 Route::group(['prefix'=>'slider'] , function(){
     Route::get('/' , [SliderController::class , 'index'])->name('slider.index');
@@ -62,3 +66,7 @@ Route::group(['prefix'=>'product'] , function(){
     Route::put('/{product}/update' , [ProductController::class , 'update'])->name('product.update');
     Route::delete('/{product}' , [ProductController::class , 'destroy'])->name('product.destroy');
 });
+
+Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
+
