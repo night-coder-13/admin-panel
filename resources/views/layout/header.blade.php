@@ -29,8 +29,8 @@
         <div class="w-100"></div>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap d-flex align-items-center">
-                <span class="nav-link text-white">مهدی</span>
-                <a class="nav-link text-white px-3" href="#">خروج</a>
+                <span class="nav-link text-white">{{ auth()->user()->name }}</span>
+                <a class="nav-link text-white px-3" href="{{ route('auth.logout') }}">خروج</a>
             </div>
         </div>
     </header>
